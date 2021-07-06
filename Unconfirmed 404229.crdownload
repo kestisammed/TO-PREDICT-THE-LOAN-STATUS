@@ -1,0 +1,75 @@
+ 
+import pickle
+import streamlit as st
+ 
+# loading the trained model
+pickle_in = open('loan_prediction_LR.pkl', 'rb') 
+model_LR = pickle.load(pickle_in)
+ 
+def run():
+    st.title("BANK LOAN PREDICTOR")
+
+   
+    ## For gender
+    gen_display = ('Female','Male')
+    gen_options = list(range(len(gen_display)))
+    Gender = st.selectbox("Gender",gen_options, format_func=lambda x: gen_display[x])
+
+    ## For Marital Status
+    mar_display = ('No','Yes')
+    mar_options = list(range(len(mar_display)))
+    Married = st.selectbox("Marital Status", mar_options, format_func=lambda x: mar_display[x])
+
+    ## No of dependets
+    dep_display = ('0','1','2','3')
+    dep_options = list(range(len(dep_display)))
+    Dependents = st.selectbox("Dependents",  dep_options, format_func=lambda x: dep_display[x])
+
+    ## For education
+    edu_display = ('Not Graduate','Graduate')
+    edu_options = list(range(len(edu_display)))
+    Education = st.selectbox("Education",edu_options, format_func=lambda x: edu_display[x])
+
+    ## For Employment status
+    emp_display = ('Yes','No')
+    emp_options = list(range(len(emp_display)))
+    Self_Employed = st.selectbox("Employment Status",emp_options, format_func=lambda x: emp_display[x])
+
+    ## For Property area
+    prop_display = ('Rural','Semi-Urban','Urban')
+    prop_options = list(range(len(prop_display)))
+    Property_Area = st.selectbox("Property Area",prop_options, format_func=lambda x: prop_display[x])
+
+    ## For Credit history
+    cred_display = ('0','1')
+    cred_options = list(range(len(cred_display)))
+    Credit_History = st.selectbox("Credit History",cred_options, format_func=lambda x: cred_display[x])
+
+    ## Applicant Income
+    ApplicantIncome = st.number_input("Applicant's Monthly Income",value=0)
+
+    ## Co-Applicant Income
+    CoapplicantIncome = st.number_input("Co-Applicant's Monthly Income",value=0)
+
+    ## Loan Aount
+    Loan_Amount = st.number_input("Loan Amount",value=0)
+
+    ## loan amount term
+    Loan_Amount_Term = st.number_input("Loan Amount Term(in months)",value=0)
+
+    if st.button("Submit"):
+        features = [[Gender, Married, Dependents, Education, Self_Employed, ApplicantIncome, CoapplicantIncome, Loan_Amount, Loan_Amount_Term, Credit_History, Property_Area]]
+        print(features)
+        prediction = model_LR.predict(features)
+        lc = [str(i) for i in prediction]
+        ans = int("".join(lc))
+        if ans == 0:
+            st.error(
+                'According to our Calculations, you will not get the loan from Bank'
+            )
+        else:
+            st.success(
+                'Congratulations!! you will get the loan from Bank'
+            )
+
+run()
